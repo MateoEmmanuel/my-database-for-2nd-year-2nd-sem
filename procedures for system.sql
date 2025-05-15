@@ -15,6 +15,7 @@ BEGIN
     END IF;
 END //
 
+
 CREATE PROCEDURE GetProfileImageByRole (
     IN p_id INT,
     IN p_role VARCHAR(50)
@@ -33,15 +34,7 @@ BEGIN
     END IF;
 END //
 
-CREATE PROCEDURE getaccountinfo_personel(
-    IN p_id INT,
-    OUT first_name VARCHAR(50),
-    OUT middle_name VARCHAR(50),
-    OUT last_name VARCHAR(50),
-    OUT contact_number VARCHAR(15),
-    OUT email VARCHAR(100),
-    OUT Position_name VARCHAR(100)
-)
+CREATE PROCEDURE getaccountinfo_personel(IN p_id INT)
 BEGIN
     SELECT 
         ra.first_name,
@@ -50,14 +43,28 @@ BEGIN
         ra.contact_number,
         ra.email,
         pl.Position_name
-    INTO 
-        first_name,
-        middle_name,
-        last_name,
-        contact_number,
-        email,
-        Position_name
     FROM restaurant_accounts ra
     JOIN Position_List pl ON ra.position_id = pl.Position_ID
     WHERE ra.account_id = p_id;
 END //
+
+
+CREATE PROCEDURE updateaccountinfo_personel(
+    IN p_id INT, 
+    IN p_fname VARCHAR(100), 
+    IN p_mname VARCHAR(100), 
+    IN p_lname VARCHAR(100), 
+    IN p_contactnumber VARCHAR(15), 
+    IN p_email VARCHAR(100)
+)
+BEGIN
+    UPDATE restaurant_accounts
+    SET 
+        first_name = p_fname,
+        middle_name = p_mname,
+        last_name = p_lname,
+        contact_number = p_contactnumber,
+        email = p_email
+    WHERE account_id = p_id;
+END //
+    
