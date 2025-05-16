@@ -37,6 +37,7 @@ END //
 CREATE PROCEDURE getaccountinfo_personel(IN p_id INT)
 BEGIN
     SELECT 
+		ra.username,
         ra.first_name,
         ra.middle_name,
         ra.last_name,
@@ -49,22 +50,55 @@ BEGIN
 END //
 
 
-CREATE PROCEDURE updateaccountinfo_personel(
-    IN p_id INT, 
-    IN p_fname VARCHAR(100), 
-    IN p_mname VARCHAR(100), 
-    IN p_lname VARCHAR(100), 
-    IN p_contactnumber VARCHAR(15), 
-    IN p_email VARCHAR(100)
+CREATE PROCEDURE UpdateAccountInfo_personel (
+	IN p_id int,
+    IN p_username VARCHAR(50),
+    IN p_firstname VARCHAR(50),
+    IN p_middlename VARCHAR(50),
+    IN p_lastname VARCHAR(50),
+    IN p_email VARCHAR(100),
+    IN p_contact VARCHAR(25)
 )
 BEGIN
+    -- Update Account details
     UPDATE restaurant_accounts
     SET 
-        first_name = p_fname,
-        middle_name = p_mname,
-        last_name = p_lname,
-        contact_number = p_contactnumber,
-        email = p_email
-    WHERE account_id = p_id;
+        First_Name = p_firstname,
+        Middle_Name = p_middlename,
+        Last_Name = p_lastname,
+        Email = p_email,
+        Contact_Number = p_contact
+    WHERE Account_ID = p_id;
+END //
+
+CREATE PROCEDURE UpdateProfilePicture_personel (
+    IN p_account_id INT,
+    IN p_image LONGBLOB
+)
+BEGIN
+    DECLARE existing_image_id INT;
+
+    -- Get current image_id of the user
+    SELECT image_id INTO existing_image_id
+    FROM restaurant_accounts
+    WHERE account_id = p_account_id;
+
+    IF existing_image_id IS NULL THEN
+        -- Insert new image if none exists
+        INSERT INTO Image_List (Image)
+        VALUES (p_image);
+
+        SET existing_image_id = LAST_INSERT_ID();
+
+        -- Update restaurant_accounts with new image_id
+        UPDATE restaurant_accounts
+        SET image_id = existing_image_id
+        WHERE account_id = p_account_id;
+    ELSE
+        -- Update existing image
+        UPDATE Image_List
+        SET Image = p_image
+        WHERE Image_ID = existing_image_id;
+    END IF;
 END //
     
