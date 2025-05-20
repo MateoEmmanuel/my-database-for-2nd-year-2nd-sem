@@ -247,6 +247,8 @@ CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
     customer varchar(250),
+    address text not null,
+    contact_number int not null,
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
     gcash_payed Enum("Yes","No"),
