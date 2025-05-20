@@ -103,3 +103,30 @@ BEGIN
 END //
      
     
+-- Stored Procedure: Get Orders for Cashier Display
+CREATE PROCEDURE Get_Customer_Orders (
+    IN p_order_id INT
+)
+BEGIN
+    SELECT 
+        po.order_ID,
+        poi.order_list_ID,
+        poi.item_id,
+        poi.Item_Type,
+        poi.Quantity,
+        poi.Price_Per_Item,
+        poi.Total_Item_Price
+    FROM processing_orders po
+    JOIN processing_order_items poi ON po.order_ID = poi.order_ID
+    WHERE po.order_ID = p_order_id;
+END //
+
+-- Stored Procedure: Update Order Status After Payment
+CREATE PROCEDURE Update_Order_Status (
+    IN p_order_id INT
+)
+BEGIN
+    UPDATE processing_orders
+    SET order_status = 'Preparing'
+    WHERE order_ID = p_order_id AND order_status = 'Pending';
+END //
