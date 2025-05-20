@@ -193,6 +193,7 @@ CREATE TABLE Ordered_Logs (
     Or_Logs_ID INT PRIMARY KEY AUTO_INCREMENT,
     Transaction_ID VARCHAR(25) NOT NULL UNIQUE,
     customer_id INT DEFAULT NULL,
+    customer_account_type Enum("customer","guest"),
     cashier_id INT DEFAULT NULL,
     Discount_ID INT DEFAULT NULL,
     Total_Price DECIMAL(10,2) NOT NULL,
@@ -242,23 +243,6 @@ CREATE TABLE Activity_Log (
 
 -- --------------------------------------------------
 -- order processing --
-CREATE TABLE Transaction_User_Info (
-    info_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_type ENUM('customer', 'guest') NOT NULL,
-    username VARCHAR(255) NOT NULL,
-    contact_number VARCHAR(20) NOT NULL,
-    location TEXT NOT NULL
-);
-
-CREATE TABLE transactions (
-    transaction_id INT PRIMARY KEY AUTO_INCREMENT,
-    info_id INT NOT NULL,
-    order_type ENUM('delivery', 'walk-in') NOT NULL,
-    date_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (info_id) REFERENCES Transaction_User_Info(info_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- Create both tables first without circular FK
 CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
