@@ -55,7 +55,6 @@ CREATE TABLE customer_locations (
 
 CREATE TABLE guest_accounts (
     guest_id INT AUTO_INCREMENT PRIMARY KEY,
-    guest_username VARCHAR(255) NOT NULL,
     contact_number VARCHAR(15)
 );
 
@@ -160,28 +159,6 @@ CREATE TABLE Combo_Food_Organizer (
     FOREIGN KEY (Combo_List_ID) REFERENCES Combo_Food_List(Combo_List_ID) ON DELETE RESTRICT
 );
 
--- Ordering Module --
-CREATE TABLE order_list (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT DEFAULT NULL,
-    transaction_code VARCHAR(25) NOT NULL UNIQUE,
-    status ENUM('pending', 'verified', 'cancelled', 'completed') DEFAULT 'pending',
-    order_type ENUM('online', 'walk-in') DEFAULT 'online',
-    total_price DECIMAL(10,2) NOT NULL,
-    date_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customer_accounts(customer_id) ON DELETE SET NULL
-);
-
-CREATE TABLE order_item_list (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    item_name VARCHAR(100) NOT NULL,
-    item_type ENUM('normal', 'drink', 'dessert', 'combo') NOT NULL,
-    quantity INT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES order_list(order_id) ON DELETE CASCADE
-);
-
 CREATE TABLE Discount_Table (
     Discount_ID INT PRIMARY KEY AUTO_INCREMENT,
     Discount_Name VARCHAR(50) UNIQUE NOT NULL,
@@ -246,15 +223,18 @@ CREATE TABLE Activity_Log (
 CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
-    customer varchar(250),
-    address text not null,
-    contact_number int not null,
+    guest_id int,
+    customer_id int,
+    guest_name varchar(250),
+    guest_location text,
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
-    gcash_payed Enum("Yes","No"),
+    Payed Enum("Yes","No"),
     table_number int,
     order_type ENUM('dine-in','take-out','delivery') not null default 'dine-in',
-    order_time timestamp not null default current_timestamp
+    order_time timestamp not null default current_timestamp,
+    foreign key (guest_id) references guest_accounts(guest_id),
+    foreign key (customer_id) references customer_accounts(customer_id)
 );
 
 CREATE TABLE processing_order_items (
