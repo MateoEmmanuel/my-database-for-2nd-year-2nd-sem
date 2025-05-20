@@ -40,7 +40,6 @@ CREATE TABLE customer_accounts (
     Fname VARCHAR(100),
     Mname VARCHAR(100),
     Lname VARCHAR(100),
-    fullname VARCHAR(200) AS (CONCAT(Fname, ' ', Mname, ' ', Lname)) STORED,
     contact_number VARCHAR(15) UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
@@ -263,9 +262,13 @@ CREATE TABLE transactions (
 CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
+    customer varchar(250),
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
-    table_number int
+    gcash_payed Enum("Yes","No"),
+    table_number int,
+    order_type ENUM('dine-in','take-out','delivery') not null default 'dine-in',
+    order_time timestamp not null default current_timestamp
 );
 
 CREATE TABLE processing_order_items (
@@ -274,15 +277,8 @@ CREATE TABLE processing_order_items (
     item_id INT NOT NULL,
     Item_Type ENUM('normal', 'drink', 'dessert', 'combo') NOT NULL,
     Quantity INT NOT NULL,
+    Prep_status Enum('preparing','prepared','served'), 
     Price_Per_Item DECIMAL(10,2) NOT NULL,
     Total_Item_Price DECIMAL(10,2) AS (Quantity * Price_Per_Item) STORED,
     FOREIGN KEY (order_ID) REFERENCES processing_orders(order_ID) ON DELETE CASCADE ON UPDATE CASCADE
-    -- this will be replaced as:
-    -- FOREIGN KEY (order_list_id) REFERENCES processing_order_items(order_list_ID)
 );
-
--- Now add the second FK
-ALTER TABLE processing_orders
-ADD CONSTRAINT fk_order_list_id
-FOREIGN KEY (order_list_id) REFERENCES processing_order_items(order_list_ID)
-ON DELETE CASCADE ON UPDATE CASCADE;
