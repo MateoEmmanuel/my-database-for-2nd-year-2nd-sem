@@ -103,30 +103,67 @@ BEGIN
 END //
      
     
--- Stored Procedure: Get Orders for Cashier Display
-CREATE PROCEDURE Get_Customer_Orders (
-    IN p_order_id INT
+CREATE PROCEDURE loging_walk_in_order (
+    IN p_order_id INT,
+    IN p_transaction_id VARCHAR(25),
+    IN p_cashier_id INT,
+    IN p_discount_id INT,
+    IN p_total_price DECIMAL(10,2),
+    IN p_payment_method text,
+    IN p_order_type ENUM('delivery', 'walk-in'),
+    IN p_customer_id INT,
+    IN p_customer_account_type ENUM('customer','guest'),
+    OUT p_or_logs_id INT
 )
 BEGIN
-    SELECT 
-        po.order_ID,
-        poi.order_list_ID,
-        poi.item_id,
-        poi.Item_Type,
-        poi.Quantity,
-        poi.Price_Per_Item,
-        poi.Total_Item_Price
-    FROM processing_orders po
-    JOIN processing_order_items poi ON po.order_ID = poi.order_ID
-    WHERE po.order_ID = p_order_id;
+    -- Insert into Ordered_Logs
+    INSERT INTO Ordered_Logs (
+        Transaction_ID,
+        customer_id,
+        customer_account_type,
+        cashier_id,
+        Discount_ID,
+        Total_Price,
+        payment_method,
+        order_type,
+        status
+    ) VALUES (
+        p_transaction_id,
+        p_customer_id,
+        p_customer_account_type,
+        p_cashier_id,
+        p_discount_id,
+        p_total_price,
+        p_payment_method,
+        p_order_type,
+        'paid'
+    );
+
+    -- Return the last inserted ID
+    SET p_or_logs_id = LAST_INSERT_ID();
 END //
 
--- Stored Procedure: Update Order Status After Payment
-CREATE PROCEDURE Update_Order_Status (
-    IN p_order_id INT
+CREATE PROCEDURE log_order_items (
+    IN p_order_list_id INT,
+    IN p_or_logs_id INT
 )
 BEGIN
-    UPDATE processing_orders
-    SET order_status = 'Preparing'
-    WHERE order_ID = p_order_id AND order_status = 'Pending';
+    -- Insert all related items from processing_order_items to Ordered_Items
+    INSERT INTO Ordered_Items (
+        Or_Logs_ID,
+        item_id,
+        Item_Type,
+        Quantity,
+        Price_Per_Item
+    )
+    SELECT
+        p_or_logs_id,
+        item_id,
+        Item_Type,
+        Quantity,
+        Price_Per_Item
+    FROM processing_order_items
+    WHERE order_list_ID = p_order_list_id;
 END //
+
+DELIMITER ;

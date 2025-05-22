@@ -12,10 +12,8 @@ CREATE TABLE Image_List (
 CREATE TABLE Position_List (
     Position_ID INT PRIMARY KEY AUTO_INCREMENT,
     Position_name VARCHAR(100) NOT NULL UNIQUE,
-    Salary DECIMAL(10, 2) NOT NULL,
     FULLTEXT(Position_name)
 );
-
 
 CREATE TABLE restaurant_accounts (
     account_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -174,12 +172,11 @@ CREATE TABLE Ordered_Logs (
     cashier_id INT DEFAULT NULL,
     Discount_ID INT DEFAULT NULL,
     Total_Price DECIMAL(10,2) NOT NULL,
-    payment_method ENUM('cash', 'card', 'online') DEFAULT 'cash',
-    order_type ENUM('online', 'walk-in') DEFAULT 'walk-in',
+    payment_method text,
+    order_type ENUM('delivery', 'walk-in') DEFAULT 'walk-in',
     status ENUM('pending', 'paid', 'cancelled') DEFAULT 'pending',
     Date_Time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Discount_ID) REFERENCES Discount_Table(Discount_ID),
-    FOREIGN KEY (customer_id) REFERENCES customer_accounts(customer_id),
     FOREIGN KEY (cashier_id) REFERENCES restaurant_accounts(account_id)
 );
 
@@ -229,7 +226,7 @@ CREATE TABLE processing_orders (
     guest_location text,
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
-    Payed Enum("Yes","No"),
+    delivery_payment_status Enum("Yes","No"),
     table_number int,
     order_type ENUM('dine-in','take-out','delivery') not null default 'dine-in',
     order_time timestamp not null default current_timestamp,
