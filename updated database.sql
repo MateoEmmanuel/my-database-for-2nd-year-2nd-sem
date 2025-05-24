@@ -51,11 +51,6 @@ CREATE TABLE customer_locations (
     FOREIGN KEY (customer_id) REFERENCES customer_accounts(customer_id) ON DELETE CASCADE on update cascade
 );
 
-CREATE TABLE guest_accounts (
-    guest_id INT AUTO_INCREMENT PRIMARY KEY,
-    contact_number VARCHAR(15)
-);
-
 -- Menu Module --
 CREATE TABLE Food_Category (
     F_Category_ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -168,14 +163,15 @@ CREATE TABLE Ordered_Logs (
     Or_Logs_ID INT PRIMARY KEY AUTO_INCREMENT,
     Transaction_ID VARCHAR(25) NOT NULL UNIQUE,
     customer_id INT DEFAULT NULL,
-    customer_account_type Enum("customer","guest"),
     cashier_id INT DEFAULT NULL,
+    Original_Price INT not null,
     Discount_ID INT DEFAULT NULL,
     Total_Price DECIMAL(10,2) NOT NULL,
     payment_method text,
-    order_type ENUM('delivery', 'walk-in') DEFAULT 'walk-in',
-    status ENUM('pending', 'paid', 'cancelled') DEFAULT 'pending',
+    order_type ENUM('delivery', 'dine-in', 'take-out') not null,
+    status ENUM('unpaid', 'paid', 'cancelled') DEFAULT 'unpaid',
     Date_Time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customer_accounts(customer_id),
     FOREIGN KEY (Discount_ID) REFERENCES Discount_Table(Discount_ID),
     FOREIGN KEY (cashier_id) REFERENCES restaurant_accounts(account_id)
 );
@@ -220,17 +216,13 @@ CREATE TABLE Activity_Log (
 CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
-    guest_id int,
     customer_id int,
-    guest_name varchar(250),
-    guest_location text,
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
     delivery_payment_status Enum("Yes","No"),
     table_number int,
     order_type ENUM('dine-in','take-out','delivery') not null default 'dine-in',
     order_time timestamp not null default current_timestamp,
-    foreign key (guest_id) references guest_accounts(guest_id),
     foreign key (customer_id) references customer_accounts(customer_id)
 );
 
