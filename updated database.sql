@@ -47,7 +47,11 @@ CREATE TABLE customer_locations (
     location_id INT AUTO_INCREMENT PRIMARY KEY,
     location_name VARCHAR(255) NOT NULL,
     customer_id INT,
-    location TEXT NOT NULL,
+    Street_Address TEXT NOT NULL,
+    Barangay_Subdivision TEXT NOT NULL,
+    City_Municipality TEXT NOT NULL,
+    Province_Region TEXT NOT NULL,
+    landmark text not null,
     FOREIGN KEY (customer_id) REFERENCES customer_accounts(customer_id) ON DELETE CASCADE on update cascade
 );
 
