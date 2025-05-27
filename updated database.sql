@@ -224,6 +224,8 @@ CREATE TABLE processing_orders (
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
     delivery_payment_status Enum("Yes","No"),
+    delivery_distance DECIMAL(10,5),
+    delivery_payment_method Enum("cash","gcash"),
     table_number int,
     order_type ENUM('dine-in','take-out','delivery') not null default 'dine-in',
     order_time timestamp not null default current_timestamp,
