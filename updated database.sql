@@ -221,6 +221,7 @@ CREATE TABLE processing_orders (
     order_ID INT PRIMARY KEY AUTO_INCREMENT,
     order_status VARCHAR(10) DEFAULT "Pending" NOT NULL,
     customer_id int,
+    customer_note text,
     transaction_id INT NOT NULL UNIQUE,
     order_list_id INT NOT NULL UNIQUE,
     delivery_payment_status Enum("Yes","No"),
