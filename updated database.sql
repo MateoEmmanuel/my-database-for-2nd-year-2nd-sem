@@ -239,7 +239,7 @@ CREATE TABLE processing_order_items (
     item_id INT NOT NULL,
     Item_Type ENUM('normal', 'drink', 'dessert', 'combo') NOT NULL,
     Quantity INT NOT NULL,
-    Prep_status Enum('preparing','prepared','served'), 
+    Prep_status Enum('preparing','prepared') default 'preparing', 
     Price_Per_Item DECIMAL(10,2) NOT NULL,
     Total_Item_Price DECIMAL(10,2) AS (Quantity * Price_Per_Item) STORED,
     FOREIGN KEY (order_ID) REFERENCES processing_orders(order_ID) ON DELETE CASCADE ON UPDATE CASCADE
